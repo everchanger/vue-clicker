@@ -1,0 +1,31 @@
+@tailwind preflight;
+
+@tailwind components;
+
+// Put component classes here
+.buy-btn {
+   @apply border p-2 m-2 rounded bg-green-lighter;
+
+   &:hover {
+      @apply border p-2 m-2 rounded bg-grey-light;
+   }
+
+   &:disabled {
+      @apply border p-2 m-2 rounded bg-grey-lightest;
+   }
+}
+
+h3 {
+   @apply text-base font-normal;
+}
+
+@tailwind utilities;
+
+@responsive {
+	.border-box {
+	  box-sizing: border-box;
+	}
+	.content-box {
+	  box-sizing: content-box;
+	}
+ }
