@@ -4,14 +4,14 @@
 
 // Put component classes here
 .buy-btn {
-   @apply border p-2 m-2 rounded bg-green-lighter;
+   @apply border-2 border-green p-1 m-1 rounded bg-green-lighter text-sm shadow;
 
    &:hover {
-      @apply border p-2 m-2 rounded bg-grey-light;
+      @apply bg-green-light;
    }
 
    &:disabled {
-      @apply border p-2 m-2 rounded bg-grey-lightest;
+      @apply bg-grey-lightest border-grey;
    }
 }
 

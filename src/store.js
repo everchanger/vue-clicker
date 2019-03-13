@@ -3,6 +3,10 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+function roundFloat(float, decimals) {
+   return parseFloat(float.toFixed(2));
+}
+
 export default new Vuex.Store({
    state: {
       cash: 0
@@ -13,9 +17,11 @@ export default new Vuex.Store({
    mutations: {
       addCash (state, amount) {
          state.cash += amount;
+         state.cash = roundFloat(state.cash, 2);
       },
       subtractCash (state, amount) {
          state.cash -= amount;
+         state.cash = roundFloat(state.cash, 2);
          state.cash = state.cash < 0 ? 0 : state.cash;
       }
    },

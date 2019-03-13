@@ -1,29 +1,33 @@
 <template>
-   <div class="mt-2 font-normal text-md border rounded p-2 w-1/2 shadow-md">
-      <div class="m-2 flex justify-between">
-         <div>
-            <h3 class="text-xl font-bold text-grey-darker mb-1">{{ name }}</h3>
-            <p class="text-grey-darker">Profit ${{ profit }}</p>
-            <p class="text-grey-darker">{{ timeToGenerate / 1000 }} seconds</p>
-         </div>
-         <div>
-            <span class="text-grey-darker font-bold">{{ amountOwned }} owned</span>
-         </div>
-      </div>
-      <div class="m-2">
-         <div class="border h-8 bg-green-lightest">
-            <div class="bg-green h-full" :style="{'width': current + '%'}" />
-         </div>
-      </div>
+   <div class="sm:m-4 mb-4 font-normal text-sm border rounded p-2 shadow w-full sm:w-1/2">
       <div class="flex justify-between">
-         <div>
-            <button class="buy-btn" :title="price(1)" :disabled="!canBuy(1)" @click="buy(1)">Buy one</button>
-            <button class="buy-btn" :title="price(10)" :disabled="!canBuy(10)" @click="buy(10)">10</button>
-            <button class="buy-btn" :title="price(25)" :disabled="!canBuy(25)" @click="buy(25)">25</button>
-            <button class="buy-btn" :title="price(100)" :disabled="!canBuy(100)" @click="buy(100)">100</button>
-            <button class="buy-btn" :title="price(maxAmountCanBuy)" :disabled="maxAmountCanBuy <= 0 || !canBuy(maxAmountCanBuy)" @click="buy(maxAmountCanBuy)">{{maxAmountCanBuy <= 0 ? 'None' : maxAmountCanBuy}}</button>
+         <button
+            :disabled="amountOwned == 0"
+            :title="amountOwned == 0 ? 'Cant use until bought at least one of ' + name : 'Collect'"
+            class="buy-btn bg-green-lighter w-1/4 flex flex-col justify-center items-center text-2xl"
+            @click="start"
+         >
+            <font-awesome-icon class="text-4xl mb-2" :icon="icon"></font-awesome-icon> {{ amountOwned }}
+         </button>
+         <div class="w-3/4">
+            <div class="m-2">
+               <h3 class="text-xs font-bold text-grey-darker mb-1">{{ name }}</h3>
+               <p class="text-grey-darker">Profit ${{ profit }}</p>
+               <p class="text-grey-darker">{{ timeToGenerate / 1000 }} seconds</p>
+            </div>
+            <div class="m-2">
+               <div class="border h-8 bg-green-lightest">
+                  <div class="bg-green h-full" :style="{'width': current + '%'}" />
+               </div>
+            </div>
+            <div>
+               <button class="buy-btn" :title="price(1)" :disabled="!canBuy(1)" @click="buy(1)">Buy one</button>
+               <button class="buy-btn" :title="price(10)" :disabled="!canBuy(10)" @click="buy(10)">10</button>
+               <button class="buy-btn" :title="price(25)" :disabled="!canBuy(25)" @click="buy(25)">25</button>
+               <button class="buy-btn" :title="price(100)" :disabled="!canBuy(100)" @click="buy(100)">100</button>
+               <button class="buy-btn" :title="price(maxAmountCanBuy)" :disabled="maxAmountCanBuy <= 0 || !canBuy(maxAmountCanBuy)" @click="buy(maxAmountCanBuy)">{{maxAmountCanBuy <= 0 ? 'None' : maxAmountCanBuy}}</button>
+            </div>
          </div>
-         <button class="buy-btn bg-purple-lighter" @click="start">Collect</button>
       </div>
    </div>
 </template>
@@ -37,6 +41,10 @@ export default {
          type: String,
          required: true,
       },
+      startAmount: {
+         default: 0,
+         Number,
+      },
       startCost: {
          default: 10,
          type: Number,
@@ -48,6 +56,10 @@ export default {
       timeToGenerate: {
          default: 1000,
          type: Number,
+      },
+      icon: {
+         default: 'times',
+         type: String,
       }
    },
    data: function () {
@@ -55,8 +67,8 @@ export default {
          inProgress: false,
          interval: 10,
          current: 0,
-         amountOwned: 1,
-         costModifierOnBuy: 0.01,
+         amountOwned: this.startAmount,
+         costModifierOnBuy: 0.00,
          costModifier: 1,
       };
    },
@@ -74,19 +86,18 @@ export default {
          }
 
          this.amountOwned += amount;
-         this.subtractCash(this.price(amount));
-         this.costModifier += this.costModifierOnBuy;
+         for(let i = 0; i < amount; ++i) {
+            this.subtractCash(this.price(1));
+            this.costModifier += this.costModifierOnBuy;
+         }
       },
       price(amount) {
          let price = 0;
          let currentCost = this.cost;
-         let tempCostModifier = this.costModifier;
          for(let i = 0; i < amount; ++i) {
-            currentCost = currentCost * tempCostModifier;
             price += currentCost;
-            tempCostModifier += this.costModifierOnBuy;
          }
-         return price;
+         return price.toFixed(2);
       },
       updateProgress() {
          const fraction = (this.interval / (this.timeToGenerate)) * 100;
@@ -113,10 +124,15 @@ export default {
          'cash',
       ]),
       maxAmountCanBuy() {
-         return parseInt(this.cash / this.cost);
+         const maxAmountToBuy = 1000;
+         for(let i = 0; i < maxAmountToBuy; i++) {
+            if(!this.canBuy(i)) {
+               return i - 1;
+            }
+         }
       },
       profit() {
-         return this.startProfit * this.amountOwned;
+         return this.startProfit * (this.amountOwned ? this.amountOwned : 1);
       },
       cost() {
          return this.startCost * this.costModifier;

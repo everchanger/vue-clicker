@@ -1,13 +1,15 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <div class="container m-auto">
-      <router-view/>
-    </div>
-  </div>
+   <div id="app">
+      <div id="nav">
+         <router-link to="/">Home</router-link> |
+         <router-link to="/about">About</router-link>
+      </div>
+      <div class="container m-auto">
+         <div class="w-full p-4">
+               <router-view/>
+         </div>
+      </div>
+   </div>
 </template>
 
 <style lang="scss">
