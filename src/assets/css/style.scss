@@ -3,20 +3,36 @@
 @tailwind components;
 
 // Put component classes here
-.buy-btn {
-   @apply border-2 border-green p-1 m-1 rounded bg-green-lighter text-sm shadow;
+.btn {
+   @apply border-2 border-green p-1 mr-1 rounded bg-green-lighter text-sm text-green-darker shadow;
 
    &:hover {
-      @apply bg-green-light;
+      @apply bg-green-light border-green-dark;
    }
 
    &:disabled {
-      @apply bg-grey-lightest border-grey;
+      @apply bg-grey-lightest border-grey text-grey;
+   }
+
+   &:disabled:hover {
+      @apply cursor-default;
+   }
+}
+
+.collect-btn {
+   @apply bg-green-lighter w-1/4 flex flex-col justify-center items-center text-2xl;
+
+   &:disabled {
+      @apply bg-green-lightest text-grey-dark;
    }
 }
 
 h3 {
    @apply text-base font-normal;
+}
+
+.btn.manager-hired {
+   @apply bg-purple-light border-purple-dark text-purple-darker;
 }
 
 @tailwind utilities;
